@@ -16,23 +16,22 @@ def FaceExtract(img):
     return cropped_face
 
 if __name__ == '__main__':
-    cap = cv.VideoCapture(0)
     count = 0
-    
+    dataPath = './data'
     while True:
-        ret, frame = cap.read()
-        if FaceExtract(frame) != None:
+        frame = cv.imread(dataPath+'/'+str(count)+'.jpg')
+        if FaceExtract(frame) is not None:
             count += 1
             face = cv.resize(FaceExtract(frame), (200, 200))
             face = cv.cvtColor(face, cv.COLOR_BGR2GRAY)
             file_name_path = 'faces/user'+str(count)+'.jpg'
             cv.imwrite(file_name_path, face)
         else:
-            print("Face Not Fount")
+            print(str(count)+"Face Not Fount")
+            count += 1
             pass
             
         if cv.waitKey(1) == 13 or count == 100:
             break
         
-    cap.release()
     print("Sample Collecting Complete")
