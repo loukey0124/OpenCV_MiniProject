@@ -5,9 +5,6 @@ import flaskserver
 
 app = Flask(__name__, static_folder='faces', template_folder='template')
 
-@app.route('/')
-def test_1():
-    
 
 
 if __name__ == '__main__':
