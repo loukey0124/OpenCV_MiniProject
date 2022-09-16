@@ -1,9 +1,4 @@
-from urllib import response
-from wsgiref.util import request_uri
-import numpy as np
 import requests
-from picamera import PiCamera
-from time import sleep
 import os
 import cv2 as cv
 
@@ -20,7 +15,7 @@ def FaceExtract(img):
         
     return cropped_face
     
-def CapData():
+def SendFaceData():
     count = 0
     global requestUrl
     
@@ -38,7 +33,7 @@ def CapData():
             face = cv.cvtColor(face, cv.COLOR_BGR2GRAY)
             cv.imwrite(filename, face)
         else:
-            print("Face Not Fount")
+            print("Face Not Found")
             continue
             
         
@@ -49,11 +44,26 @@ def CapData():
         if response.status_code == 200:
             print(str(count)+"file Send Success")
         
-        if cv.waitKey(1) == 13 or count == 100:
+        if cv.waitKey(1) == 13 or count == 2000:
             break
         
     cap.release()
 
+def CapImage():
+    global requestUrl
+    filename = 'face.jpg'
+    
+    cap = cv.VideoCapture(0)
+    if cap.isOpened() == False:
+        exit()
+    
+    ret, img = cap.read()
+    while FaceExtract(img) is None:
+        print("Face Not Found")
+        ret, img = cap.read()
+        
+    cv.imwrite(filename, img)
+    
 if __name__ == '__main__':
-    requestUrl = "http://192.168.0.43:5000"  
-    CapData()
+    requestUrl = "http://192.168.0.43:5000"
+    CapImage()
