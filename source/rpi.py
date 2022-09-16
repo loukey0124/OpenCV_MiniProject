@@ -24,40 +24,35 @@ def CapData():
     count = 0
     global requestUrl
     
-    cam = PiCamera()
-    cam.start_preview()
-    sleep(1)
+    cap = cv.VideoCapture(0)
+    if cap.isOpened() == False:
+        exit()
     
     while True:
         filename = str(count)+'.jpg'
-        cam.capture('temp.jpg')
-        frame = cv.imread('temp.jpg')
-        if FaceExtract(frame) is not None:
+        ret, img = cap.read()
+        
+        if FaceExtract(img) is not None:
             count += 1
-            face = cv.resize(FaceExtract(frame), (200, 200))
+            face = cv.resize(FaceExtract(img), (200, 200))
             face = cv.cvtColor(face, cv.COLOR_BGR2GRAY)
             cv.imwrite(filename, face)
         else:
-            print(str(count)+"Face Not Fount")
-            os.remove('temp.jpg')
+            print("Face Not Fount")
             continue
             
-        if cv.waitKey(1) == 13 or count == 100:
-            break
         
         files = {'file': open(filename, 'rb')}
         response = requests.post(requestUrl+'/upload', files=files)
-        os.remove('temp.jpg')
         os.remove(filename)
         
         if response.status_code == 200:
             print(str(count)+"file Send Success")
         
-        if count == 100:
+        if cv.waitKey(1) == 13 or count == 100:
             break
         
-    cam.stop_preview()
-    cam
+    cap.release()
 
 if __name__ == '__main__':
     requestUrl = "http://192.168.0.43:5000"  
