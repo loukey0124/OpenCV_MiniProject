@@ -38,7 +38,7 @@ try:
             distance = round(distance, 2)
 
             print ('Distance => ', distance, 'cm')
-            if distance == 10:
+            if distance <= 10:
                 #얼굴인식 관련코드
                 
                 #if(True) 라면
