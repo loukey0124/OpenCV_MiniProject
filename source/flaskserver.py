@@ -1,13 +1,11 @@
-from flask import Flask, request, render_template
+from flask import Flask, request
 import os
 import cv2 as cv
 from werkzeug.utils import secure_filename
+import searchface
 
+model = searchface.GetModel()
 app = Flask(__name__)
-
-@app.route('/')
-def method():
-    return 'nodata'
 
 upload_path = "./data"
 @app.route('/upload', methods=['POST'])
@@ -18,7 +16,13 @@ def upload_file():
     file.save(os.path.join(upload_path, filename))
     return 'Upload Success'
 
+@app.route('/confirmFace')
+def confirm():
+    accuracy = searchface.ImageMatching(model)
+    return str(accuracy)
+
 if __name__ == '__main__':
+    searchface.learnFace()
     app.run(
     host="0.0.0.0",
     port=5000,

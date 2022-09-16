@@ -2,9 +2,8 @@ import requests
 import os
 import cv2 as cv
 
-face_classifier = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
-
 def FaceExtract(img):
+    global face_classifier
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     faces = face_classifier.detectMultiScale(gray,1.3,5)
     if faces is ():
@@ -24,7 +23,7 @@ def SendFaceData():
         exit()
     
     while True:
-        filename = str(count)+'.jpg'
+        filename = str(count+200)+'.jpg'
         ret, img = cap.read()
         
         if FaceExtract(img) is not None:
@@ -49,21 +48,8 @@ def SendFaceData():
         
     cap.release()
 
-def CapImage():
-    global requestUrl
-    filename = 'face.jpg'
-    
-    cap = cv.VideoCapture(0)
-    if cap.isOpened() == False:
-        exit()
-    
-    ret, img = cap.read()
-    while FaceExtract(img) is None:
-        print("Face Not Found")
-        ret, img = cap.read()
-        
-    cv.imwrite(filename, img)
-    
+
 if __name__ == '__main__':
+    face_classifier = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
     requestUrl = "http://192.168.0.43:5000"
-    CapImage()
+    SendFaceData()
